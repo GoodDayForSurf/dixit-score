@@ -16,6 +16,7 @@ let playersAmount = 0;
 const step = ref('set-players-amount');
 const previousStep = ref();
 const score = reactive(new Map());
+let prevScore;
 let targetCardOwner = ref(null);
 const targetCardNmb = ref(null);
 const cardsSelection = reactive(new Map());
@@ -38,6 +39,7 @@ if(lastState) {
 function setPlayersAmount(amount) {
   playersAmount = amount;
   score.clear();
+  prevScore?.clear();
   new Array(amount).fill(0).forEach((val, i) => score.set(i + 1, 0));
   setStep('set-target-card-owner');
 }
@@ -168,6 +170,7 @@ function setCardVotes(cardNmb) {
 
 function countScore() {
   const targetCardVotes = cardsSelection.get(targetCardNmb.value);
+  prevScore = new Map(score);
   const addScore = (playerId, scoreValue) => score.set(+playerId, (score.get(+playerId) || 0) + scoreValue);
 
   if(!targetCardVotes || targetCardVotes.size === 0 || targetCardVotes.size === playersAmount - 1) {
@@ -204,6 +207,11 @@ function startRound() {
   setStep('set-target-card-owner');
 }
 
+function resetRound() {
+  saveState(prevScore);
+  location.reload();
+}
+
 function isPlayerPointOwnCard(playerId) {
   return [...cardsOwners.values()].find((value) => playerId === value)
 }
@@ -212,10 +220,10 @@ function isPlayerVoted(playerId) {
   return [...cardsSelection.values()].find((votes) => votes.has(playerId))
 }
 
-function saveState() {
+function saveState(scoreToSave = score) {
   localStorage.setItem('dixit-game-state', JSON.stringify({
     playersAmount,
-    score: Object.fromEntries(score)
+    score: Object.fromEntries(scoreToSave)
   }))
 }
 
@@ -256,6 +264,10 @@ function getPlace(playerId) {
            class="new-game-btn"
            @click="onOffPlayer"
       >On/Off player</div>
+      <div v-if="prevScore"
+           class="new-game-btn"
+           @click="resetRound"
+      >Reset Round</div>
     </div>
     <div class="hint">{{hints[step]}}
       <div v-if="needConfirm" class="confirm-marker">Confirm?</div>

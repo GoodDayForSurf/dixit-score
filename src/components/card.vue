@@ -27,8 +27,15 @@ defineProps({
 <template>
   <div class="card" :class="{selected: isSelected, target: isTarget}">
     <div class="number">{{msg}}</div>
-    <div v-if="players?.size" class="players">{{[...players].join(' ')}}</div>
-    <div v-if="owner" class="owner" :class="[`color-${owner}`]">{{owner}}</div>
+    <div v-if="players?.size" class="players">
+      <div v-for="playerId in players"
+           class="voted-payer"
+           :class="{['color-' + playerId]: true}">
+         &nbsp;
+      </div>
+        <!--{{[...players].join(' ')}}-->
+    </div>
+    <div v-if="owner" class="owner" :class="[`color-${owner}`]"><!--{{owner}}-->&nbsp;</div>
   </div>
 </template>
 
@@ -47,11 +54,13 @@ defineProps({
   align-items: center;
   justify-content: center;
 
-  background-color: blueviolet;
+  background-color: #9478ae;
   color: whitesmoke;
   border-radius: 10px;
   border-width: 0;
   font-size: 24px;
+
+
 
   &.selected {
     box-shadow: 0 0 10px 3px greenyellow
@@ -69,8 +78,19 @@ defineProps({
     position: absolute;
     bottom: 0;
     left: 0;
-    padding-left: 10px;
+    padding-left: 5px;
     font-size: 14px;
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    gap: calc(var(--player-button-size) / 15);
+    padding-bottom: 5px;
+
+    .voted-payer {
+      width: calc(var(--player-button-size) / 5);
+      height: calc(var(--player-button-size) / 5);
+      border: 1px solid white;
+    }
   }
 
   .owner {
@@ -79,6 +99,7 @@ defineProps({
     right: 0px;
     font-size: 17px;
     border-radius: 50%;
+    border: 1px solid white;
     width: 22px;
     height: 22px;
     display: flex;

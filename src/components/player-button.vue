@@ -52,7 +52,7 @@ function onClick() {
     selected: props.selected
   }"
          @click="onClick">
-      <div class="avatar">{{props.id}}</div>
+<!--      <div class="avatar">{{props.id}} &nbsp;</div>-->
     </div>
     <div v-show="showCard && !disabled" class="card-id">?</div>
     <div class="score">{{score}}</div>
